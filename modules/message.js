@@ -2,6 +2,7 @@ module.exports = {
     SIGN_IN_SUCCESS : '로그인 성공',
     INVALID_PW : '잘못된 비밀번호 입니다.',
     INVALID_USER : '존재하지 않는 아이디입니다.',
+    ALREADY_EXIST : '이미 존재하는 회원입니다. ',
     SIGN_UP_FAIL : '회원가입 실패',
     SIGN_UP_SUCCESS : '회원가입 성공',
     LIST_SUCCESS : '데이터 불러오기 성공',
@@ -19,4 +20,5 @@ module.exports = {
     TOKEN_EXPIRED: '토큰 만료',
     GET_USER_INFO_SUCCESS: '유저 정보 확인 성공',
     DELETE_USER_SUCCESS: '회원 탈퇴 성공',
+    INTERNAL_SERVER_ERROR : '서버 에러'
 }
