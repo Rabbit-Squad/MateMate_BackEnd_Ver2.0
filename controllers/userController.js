@@ -4,6 +4,7 @@ const statusCode = require('../modules/status');
 const messageCode = require('../modules/message');
 const User = require('../models/user.js');
 const bcrypt = require('bcrypt');
+const jwt = require('../modules/jwt');
 
 module.exports = {
     login : async (req, res) => {
@@ -26,10 +27,12 @@ module.exports = {
             }
         }
 
+        const token = await jwt.signToken(email);
         return res.status(statusCode.SUCCESS).json({
             code: statusCode.SUCCESS,
             message: messageCode.SIGN_IN_SUCCESS,
-            userIdx : user[0][0].id
+            userIdx : user[0][0].id,
+            accessToken : token
         });  
     },
 
