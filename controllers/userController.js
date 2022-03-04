@@ -91,5 +91,34 @@ module.exports = {
                 result : result[0]
             })
         }
+    }, 
+
+    updateProfile : async (req, res) => {
+        const userIdx = req.params.userIdx;
+        const {
+            token,
+            email,
+            nickname,
+            profileImg
+        } = req.body;
+
+        if (!userIdx || !token || !email || !nickname) {
+            return res.status(statusCode.BAD_REQUEST).send(messageCode.INVALID_REQUEST);
+        } // 누락 정보 있는 경우
+
+        if (!await User.checkEmail(email) || !await User.checkNickname(nickname)) {
+            return res.status(statusCode.ALREADY_EXIST).send(messageCode.ALREADY_EXIST);
+        } // 중복 닉네임, 이메일 체크
+
+        if (!await User.getProfile(userIdx)) {
+            return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_USER);
+        } // userIdx 잘못된 경우
+
+        const result = await User.updateProfile(userIdx, nickname, email, profileImg);
+        if (result) {
+            return res.status(statusCode.SUCCESS).send(messageCode.PROFILE_UPDATE_SUCCESS);
+        } else {
+            return res.status(statusCode.NOT_FOUND).send(messageCode.PROFILE_UPDATE_FAIL);
+        }
     }
 }
