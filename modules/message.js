@@ -20,6 +20,8 @@ module.exports = {
     TOKEN_EXPIRED: '토큰 만료',
     GET_USER_INFO_SUCCESS: '유저 정보 확인 성공',
     INVALID_USER : '유효하지 않은 사용자',
+    PROFILE_UPDATE_SUCCESS : '프로필 수정 성공',
+    PROFILE_UPDATE_FAIL : '프로필 수정 실패',
     DELETE_USER_SUCCESS: '회원 탈퇴 성공',
     INTERNAL_SERVER_ERROR : '서버 에러'
 }
