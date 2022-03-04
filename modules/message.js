@@ -23,5 +23,6 @@ module.exports = {
     PROFILE_UPDATE_SUCCESS : '프로필 수정 성공',
     PROFILE_UPDATE_FAIL : '프로필 수정 실패',
     DELETE_USER_SUCCESS: '회원 탈퇴 성공',
+    DELETE_USER_FAIL : '회원 탈퇴 실패',
     INTERNAL_SERVER_ERROR : '서버 에러'
 }

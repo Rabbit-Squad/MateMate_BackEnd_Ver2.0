@@ -6,7 +6,7 @@ module.exports = {
         const sql = `SELECT * FROM User WHERE email="${email}"`;
         try {
             const result = await pool.queryParam(sql);
-            return result;
+            return result[0];
         } catch (err) {
             throw err;
         }
@@ -63,6 +63,14 @@ module.exports = {
     }, 
     updateProfile : async (userIdx, nickname, email, profileImg) => {
         const sql = `UPDATE User SET nickname='${nickname}', email='${email}', profileImg='${profileImg}' WHERE User.id = ${userIdx}`;
+        try {
+            return await pool.queryParam(sql);
+        } catch (err) {
+            throw err;
+        }
+    },
+    deleteProfile : async (userIdx) => {
+        const sql = `DELETE from User WHERE User.id=${userIdx}`;
         try {
             return await pool.queryParam(sql);
         } catch (err) {
