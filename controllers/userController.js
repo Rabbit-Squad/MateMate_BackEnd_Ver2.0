@@ -5,6 +5,8 @@ const messageCode = require('../modules/message');
 const User = require('../models/user.js');
 const bcrypt = require('bcrypt');
 const jwt = require('../modules/jwt');
+require('dotenv').config();
+const defaultImg = process.env.DEFUALT_IMG;
 
 module.exports = {
     login : async (req, res) => {
@@ -62,5 +64,32 @@ module.exports = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(messageCode.INTERNAL_SERVER_ERROR);
         }
        
+    },
+
+    // 프로필 조회
+    showProfile : async (req, res) => {
+        const userIdx = req.params.userIdx;
+        const {
+            token
+        } = req.body;
+
+        if (!userIdx || !token) {
+            return res.status(statusCode.BAD_REQUEST).send(messageCode.INVALID_REQUEST);
+        }
+
+        const result = await User.getProfile(userIdx);
+
+        if (result[0][0].profileImg === null) {
+            result[0][0].profileImg = defaultImg;
+        } // 프로필 이미지가 없는 경우 defaultImg 자동으로 넣음
+
+        if (result.length === 0) {
+            return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_USER);
+        } else {
+            return res.status(statusCode.SUCCESS).json({
+                code : statusCode.SUCCESS,
+                result : result[0][0]
+            })
+        }
     }
 }

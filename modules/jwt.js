@@ -25,5 +25,6 @@ module.exports = {
                 return messageCode.UNAUTHORIZED; 
             }
         }
+        return decoded;
     }
 }

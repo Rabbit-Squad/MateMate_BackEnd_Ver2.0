@@ -42,9 +42,19 @@ module.exports = {
         const sql = `INSERT INTO User (nickname, email, pw) VALUES ('${nickname}', '${email}','${pw}')`;
         try {
             const result = await pool.queryParam(sql);
+            console.log(result);
             return true;
         } catch (err) {
             throw err;
         }
-    }
+    },
+    getProfile : async (userIdx) => {
+        const sql = `SELECT email, profileImg, nickname FROM User WHERE User.id = ${userIdx}`;
+        try {
+            const result = await pool.queryParam(sql);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }, 
 }
