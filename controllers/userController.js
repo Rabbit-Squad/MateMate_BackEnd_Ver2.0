@@ -78,17 +78,17 @@ module.exports = {
         }
 
         const result = await User.getProfile(userIdx);
-
-        if (result[0][0].profileImg === null) {
-            result[0][0].profileImg = defaultImg;
-        } // 프로필 이미지가 없는 경우 defaultImg 자동으로 넣음
-
-        if (result.length === 0) {
+        if (result === false) {
             return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_USER);
-        } else {
+        } 
+        else {
+            if (result[0].profileImg === null) {
+                result[0].profileImg = defaultImg;
+            } // 프로필 이미지가 없는 경우 defaultImg 자동으로 넣음
+
             return res.status(statusCode.SUCCESS).json({
                 code : statusCode.SUCCESS,
-                result : result[0][0]
+                result : result[0]
             })
         }
     }

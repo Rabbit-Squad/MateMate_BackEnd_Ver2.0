@@ -52,7 +52,12 @@ module.exports = {
         const sql = `SELECT email, profileImg, nickname FROM User WHERE User.id = ${userIdx}`;
         try {
             const result = await pool.queryParam(sql);
-            return result;
+            if (result[0].length === 0) {
+                return false;
+            } 
+            else {
+                return result[0];
+            }
         } catch (err) {
             throw err;
         }
