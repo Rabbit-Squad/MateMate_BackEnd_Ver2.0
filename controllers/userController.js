@@ -99,7 +99,6 @@ module.exports = {
 
     updateProfile : async (req, res) => {
         const userIdx = req.params.userIdx;
-        const user = await(User.getProfile(userIdx));
         const {
             token,
             email,
@@ -111,17 +110,26 @@ module.exports = {
             return res.status(statusCode.BAD_REQUEST).send(messageCode.MISS_DATA);
         } 
 
-        if (!await User.checkEmail(email) || !await User.checkNickname(nickname)) {
-            return res.status(statusCode.ALREADY_EXIST).send(messageCode.ALREADY_EXIST);
-        } 
-
-        if (!await User.getProfile(userIdx)) {
+        const user = await(User.getProfile(userIdx)); 
+        if (!user) {
             return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_USER);
         } 
-       
         if (user[0].email !== await jwt.verifyToken(token)) {
             return res.status(statusCode.TOKEN_EXPIRED).send(messageCode.UNAUTHORIZED);
         }
+
+        let availableEmail = true;
+        let availableNickname = true;
+        if (user[0].email !== email) {
+            availableEmail = await User.checkEmail(email); // 이메일 바뀌었다면 중복 여부 체크
+        }
+        if (user[0].nickname !== nickname) {
+            availableNickname = await User.checkNickname(nickname); // 닉네임 바뀌었다면 중복 여부 체크
+        }
+
+        if (!availableEmail || !availableNickname) {
+            return res.status(statusCode.ALREADY_EXIST).send(messageCode.ALREADY_EXIST); 
+        } 
 
         const result = await User.updateProfile(userIdx, nickname, email, profileImg);
         if (result) {
