@@ -7,9 +7,7 @@ module.exports = {
     signToken : async (email) => {
         const result = jwt.sign({
                 email : email,
-            }, jwtSecretKey, {
-                expiresIn : '20m'
-            })
+            }, jwtSecretKey)
 
         return result;
     }, // 토큰 발급
@@ -25,6 +23,6 @@ module.exports = {
                 return messageCode.UNAUTHORIZED; 
             }
         }
-        return decoded;
-    }
+        return decoded.email;
+    } //토큰 검사, 이메일 리턴
 }

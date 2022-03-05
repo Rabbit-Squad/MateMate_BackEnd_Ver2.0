@@ -77,6 +77,11 @@ module.exports = {
         }
 
         const result = await User.getProfile(userIdx);
+       
+        if (result[0].email !== await jwt.verifyToken(token)) {
+            return res.status(statusCode.TOKEN_EXPIRED).send(messageCode.UNAUTHORIZED);
+        }
+
         if (result === false) {
             return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_USER);
         } 
@@ -94,6 +99,7 @@ module.exports = {
 
     updateProfile : async (req, res) => {
         const userIdx = req.params.userIdx;
+        const user = await(User.getProfile(userIdx));
         const {
             token,
             email,
@@ -112,6 +118,10 @@ module.exports = {
         if (!await User.getProfile(userIdx)) {
             return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_USER);
         } 
+       
+        if (user[0].email !== await jwt.verifyToken(token)) {
+            return res.status(statusCode.TOKEN_EXPIRED).send(messageCode.UNAUTHORIZED);
+        }
 
         const result = await User.updateProfile(userIdx, nickname, email, profileImg);
         if (result) {
@@ -131,11 +141,17 @@ module.exports = {
             return res.status(statusCode.BAD_REQUEST).send(messageCode.MISS_DATA);
         } 
 
-        if (!await User.getProfile(userIdx)) {
-            return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_USER);
+        const user = await User.getProfile(userIdx); // 있는 사용자인지 확인
+        if (!user) {
+            return res.status(statusCode.BAD_REQUEST).send(messageCode.INVALID_USER); // 없는 사용자인 경우
+        } 
+        else {
+            if (user.email !== await jwt.verifyToken(token)) {
+                return res.status(statusCode.TOKEN_EXPIRED).send(messageCode.UNAUTHORIZED); // 토큰이 잘못된 경우
+            }
         }
 
-        const result = await User.deleteProfile(userIdx);
+        const result = await User.deleteProfile(userIdx); // 삭제 요청
         if (result) {
             return res.status(statusCode.SUCCESS).send(messageCode.DELETE_USER_SUCCESS);
         } else {
