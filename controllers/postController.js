@@ -4,6 +4,7 @@ const statusCode = require('../modules/status');
 const messageCode = require('../modules/message');
 const User = require('../models/user.js');
 const Post = require('../models/post');
+const { checkPostDeadline } = require('../models/post');
 require('dotenv').config();
 
 module.exports = {
@@ -89,8 +90,22 @@ module.exports = {
             return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_USER);
         }
 
-        if (!await Post.getPostInfo(postIdx)) {
+        const originTime = await Post.getPostInfo(postIdx);
+        if (!originTime) {
             return res.status(statusCode.NOT_FOUND).send(messageCode.INVALID_POST);
+        } 
+
+        if (originTime !== deadline) {
+            if (!await checkPostDeadline(deadline)) {
+                return res.status(statusCode.BAD_REQUEST).send(messageCode.INVALID_DATE);
+            } // 수정된 시간이 현재 시간 기준 안 맞는 경우
+        } 
+
+        const result = await Post.modifyPost(userIdx, postIdx, deadline, location, min_num, title, content);
+        if (result) {
+            return res.status(statusCode.SUCCESS).send(messageCode.POST_MODIFY_SUCCESS);
+        } else {
+            return res.status(statusCode.NOT_FOUND).send(messageCode.POST_MODIFY_FAIL);
         }
     }
 }

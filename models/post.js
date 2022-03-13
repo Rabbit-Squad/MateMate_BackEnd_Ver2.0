@@ -3,7 +3,7 @@ module.exports = {
     getAllPosts : async () => {
         const sql = `SELECT User.nickname, User.profileImg, Post.id, Post.deadline, Post.location, Post.min_num, Post.cur_num, Post.title, Post.content, Post.closed FROM Post INNER JOIN User ON Post.writer = User.id ORDER BY Post.id`;
         try {
-            const result = pool.queryParam(sql);
+            const result = await pool.queryParam(sql);
             return result;
         } catch (err) {
             throw err;
@@ -13,7 +13,7 @@ module.exports = {
     getMyPosts : async (userIdx) => {
         const sql = `SELECT User.nickname, User.profileImg, Post.deadline, Post.location, Post.min_num, Post.cur_num, Post.title, Post.content, Post.closed FROM Post INNER JOIN User ON Post.writer = User.id AND User.id = ${userIdx}`;
         try {
-            const result = pool.queryParam(sql);
+            const result = await pool.queryParam(sql);
             return result;
         } catch (err) {
             throw err;
@@ -35,8 +35,7 @@ module.exports = {
     writePost : async (userIdx, deadline, location, min_num, title, content) => {
         const sql = `INSERT INTO Post (writer, deadline, location, min_num, cur_num, title, content, closed) VALUES (${userIdx}, '${deadline}', '${location}', ${min_num}, 1, '${title}', '${content}', 0)`;
         try {
-            const result = pool.queryParam(sql);
-            return true;
+            return await pool.queryParam(sql);
         } catch (err) {
             throw err;
         }
@@ -45,12 +44,12 @@ module.exports = {
     getPostInfo : async (postIdx) => {
         const sql = `SELECT * FROM Post WHERE Post.id = ${postIdx}`;
         try {
-            const result = pool.queryParam(sql);
+            const result = await pool.queryParam(sql);
             if (result[0].length === 0) {
                 return false;
             } 
             else {
-                return true;
+                return result[0][0].deadline;
             }
         } catch (err) {
             throw err;
@@ -60,8 +59,7 @@ module.exports = {
     modifyPost : async (userIdx, postIdx, deadline, location, min_num, title, content) => {
         const sql = `UPDATE Post SET writer = ${userIdx}, deadline = '${deadline}', location = '${location}', min_num = ${min_num}, title = '${title}', content = '${content}' WHERE Post.id = ${postIdx}`;
         try {
-            const result = pool.queryParam(sql);
-            return true;
+            return await pool.queryParam(sql);
         } catch (err) {
             throw err;
         }
